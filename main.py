@@ -1,22 +1,17 @@
 from fastapi import FastAPI
 from uvicorn import run
-from routes.index import user
-from loguru import logger
-logger.debug("This is debug")
-# logger.info("This is information")
-logger.success("this is success")
-# logger.warning("this is warning")
-app = FastAPI(
-    title="Student Management"
-)
+from src.routes.all_routes import router
+from src.db.models import init_db
+
+app = FastAPI(title="Student Management System")
 
 
-# @app.get("/")
-# async def display():
-#     return {"hello":"world"}
+@app.on_event("startup")
+async def init_process():
+    init_db()
 
-app.include_router(user)
 
+app.include_router(router)
 
 if __name__ == "__main__":
     run("main:app", host="0.0.0.0", port=12000, reload=True)
